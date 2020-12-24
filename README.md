@@ -1,4 +1,4 @@
-# Try AzureAD Authentication via OIDC (B2C) and Get Profile via MS Graph
+# Using .Net Core 3.1 to try AzureAD Authentication via OIDC (B2C) and Get Profile via MS Graph
 
 Based from Azure Sample
 
