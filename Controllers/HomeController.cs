@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using WebApp_OpenIDConnect_DotNet.Models;
 using Microsoft.Graph;
 using System.IO;
+using Microsoft.Identity.Web;
 
 namespace WebApp_OpenIDConnect_DotNet.Controllers
 {
@@ -17,6 +18,7 @@ namespace WebApp_OpenIDConnect_DotNet.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly GraphServiceClient _graphServiceClient;
+        private readonly ITokenAcquisition _tokenAcquisition;
 
         public HomeController(ILogger<HomeController> logger,
                           GraphServiceClient graphServiceClient)
@@ -46,6 +48,29 @@ namespace WebApp_OpenIDConnect_DotNet.Controllers
 
             return View();
         }
+
+        public async Task<IActionResult> Me()
+        {
+            var me = await _graphServiceClient.Me.RequestUrl
+            ViewData["Me"] = me;
+
+            try
+            {
+                // Get user photo
+                using (var photoStream = await _graphServiceClient.Me.Photo.Content.Request().GetAsync())
+                {
+                    byte[] photoByte = ((MemoryStream)photoStream).ToArray();
+                    ViewData["Photo"] = Convert.ToBase64String(photoByte);
+                }
+            }
+            catch (System.Exception)
+            {
+                ViewData["Photo"] = null;
+            }
+
+            return View();
+        }
+        
 
         public IActionResult Privacy()
         {
